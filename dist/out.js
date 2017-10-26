@@ -10111,7 +10111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     headers: {
                         "Content-type": "application/json"
                     },
-                    body: JSON.stringify({ "query": "{product {name slug description keywords is_published author attributes{id} }}" })
+                    body: JSON.stringify({ "query": "{product {id name slug description keywords is_published author attributes{id} }}" })
                 }).then(function (response) {
                     return response.json();
                 }).then(function (responseObject) {
@@ -10133,7 +10133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var list = this.state.productData.map(function (e, i) {
                     return _react2.default.createElement(
                         'li',
-                        { key: i },
+                        { key: e.id },
                         'tyty\u0142: ',
                         e.name,
                         ' ',

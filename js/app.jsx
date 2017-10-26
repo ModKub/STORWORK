@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify({"query": "{product {name slug description keywords is_published author attributes{id} }}"})
+                body: JSON.stringify({"query": "{product {id name slug description keywords is_published author attributes{id} }}"})
             }).then(function(response) {
                 return response.json();
             }).then(responseObject => {
@@ -33,12 +33,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         componentDidMount() {
             this.getProducts();
-            
+
         }
         render() {
             console.log(this.state.rating);
             let list = this.state.productData.map((e,i) => {
-                return <li key={i}>tytył: {e.name} <br></br> opis: {e.description} <br></br> czy opublikowano: {JSON.stringify(e.is_published)} <br></br> author: {JSON.stringify(e.author)}</li>
+                return <li key={e.id}>tytył: {e.name} <br></br> opis: {e.description} <br></br> czy opublikowano: {JSON.stringify(e.is_published)} <br></br> author: {JSON.stringify(e.author)}</li>
             })
 
             return <ul>
