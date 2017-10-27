@@ -10094,9 +10094,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var _this = _possibleConstructorReturn(this, (Products.__proto__ || Object.getPrototypeOf(Products)).call(this, props));
 
+            _this.handleChange = function (e) {
+                var inputField = e.target.value;
+                _this.setState({ value: inputField });
+            };
+
+            _this.handleClick = function (e, i) {
+                e.preventDefault();
+                var product_id = i;
+                _this.setState({ product_id: product_id });
+                _this.setRate();
+            };
+
             _this.state = {
                 productData: [],
-                rating: []
+                product_id: 0,
+                value: 0
             };
             return _this;
         }
@@ -10111,15 +10124,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     headers: {
                         "Content-type": "application/json"
                     },
-                    body: JSON.stringify({ "query": "{product {id name slug description keywords is_published author attributes{id} }}" })
+                    body: JSON.stringify({ "query": "{product {id name slug description keywords is_published author attributes{id} average }}" })
                 }).then(function (response) {
                     return response.json();
                 }).then(function (responseObject) {
-                    console.log('GOT', responseObject.data.product[0]);
-
                     var data = responseObject.data.product;
                     _this2.setState({ productData: data });
                 });
+            }
+        }, {
+            key: 'setRate',
+            value: function setRate() {
+                var mutation = 'mutation {\n                            rating(product_id: ' + this.state.product_id + ', value: ' + this.state.value + ', name: "user", phone: "089", email: "aaa@o2.pl", content: "ocen") {\n                                id\n                                value\n                                }\n                            }';
+                fetch('http://188.116.11.87/graphql', {
+                    method: 'POST',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({ "query": mutation })
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (responseObject) {
+                    console.log(responseObject);
+                });
+                this.getProducts();
             }
         }, {
             key: 'componentDidMount',
@@ -10129,28 +10157,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }, {
             key: 'render',
             value: function render() {
-                console.log(this.state.rating);
+                var _this3 = this;
+
                 var list = this.state.productData.map(function (e, i) {
                     return _react2.default.createElement(
                         'li',
                         { key: e.id },
                         'tyty\u0142: ',
                         e.name,
-                        ' ',
                         _react2.default.createElement('br', null),
-                        ' opis: ',
+                        'opis: ',
                         e.description,
-                        ' ',
                         _react2.default.createElement('br', null),
-                        ' czy opublikowano: ',
+                        'ocena: ',
+                        e.average,
+                        _react2.default.createElement('br', null),
+                        'czy opublikowano: ',
                         JSON.stringify(e.is_published),
-                        ' ',
                         _react2.default.createElement('br', null),
-                        ' author: ',
-                        JSON.stringify(e.author)
+                        'author: ',
+                        JSON.stringify(e.author),
+                        _react2.default.createElement('br', null),
+                        'wystaw ocene 1-10:',
+                        _react2.default.createElement(
+                            'form',
+                            null,
+                            _react2.default.createElement('input', { type: 'number', min: '1', max: '10', onChange: _this3.handleChange }),
+                            ' ',
+                            _react2.default.createElement(
+                                'button',
+                                { onClick: function onClick(a) {
+                                        _this3.handleClick(a, e.id);
+                                    } },
+                                'Submit'
+                            )
+                        )
                     );
                 });
-
                 return _react2.default.createElement(
                     'ul',
                     null,
